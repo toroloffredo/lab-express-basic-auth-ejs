@@ -1,11 +1,13 @@
 // TODO: Please make sure you edit the user model to whatever makes sense in this case
+const { Schema, model } = require('mongoose')
+
 const userSchema = new Schema(
 {
   username: {
     type: String,
     trim: true,
     required: false,
-    unique: true
+    unique: true,
   },
   email: {
     type: String,
@@ -14,13 +16,14 @@ const userSchema = new Schema(
     lowercase: true,
     trim: true,
   },
-  password: {
-    type:String,
+  // passwordHash 
+  passwordHash: {
+    type: String,
     required: true,
-
   },
-});
+},
+);
 
-const User = model("User", userSchema);
+const User = model('User', userSchema)
 
-module.exports = User;
+module.exports = User
