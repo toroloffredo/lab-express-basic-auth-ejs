@@ -54,29 +54,24 @@ router.get("/login", (req, res, next) => {
             const loggedUser = { ...checkedUser._doc } //_doc is comming from mongoose. Use it like this if you want to make a copy of something coming from mongoose.
             delete loggedUser.passwordHash
             console.log(loggedUser)
+            req.session.user = loggedUser //once logged in we assign a loggedUser to the user on the session
+            res.redirect('/profile')
             }   else {
                 // if not correct:
                 // send the error message to the login
                 console.log('wrong credentials')
                 res.render('auth/login', {errorMessage: 'Bad credentials, try again',
-            payload: { email: currentUser.email }
+            payload: { email: currentUser.email}
             }) 
             }
-        } else {
-            //no user exists with the provided email/credentials
-
-        }
-        
-        console.log('checkedUser: ', checkedUser)
-
-
-
-
-    } catch (error) {
+        } 
+    } catch (error) { // this part is to notify if there's a crash on the frontend
         console.log('error in login POST', error)
+        res.render('auth/login', {
+            errorMessage: 'Error on the server',
+            payload: { email: currentUser.email },
+        })
     }
-
-
-    });
+});
 
 module.exports = router;
