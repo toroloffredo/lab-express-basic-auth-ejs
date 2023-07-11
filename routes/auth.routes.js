@@ -14,7 +14,7 @@ router.get("/signup", (req, res, next) => {
 });
 // this is a POST to register a new user / catch the data of the SIGNUP form
 router.post('/signup', async (req, res, next) => {
-    console.log(req.body)
+    // console.log(req.body)
 
     //Lines 19 and 20: makes a shallow copy of req.body and sends it to passwordHash and delete the payload afterwards.
     const payload = { ...req.body }
@@ -39,13 +39,39 @@ router.get("/login", (req, res, next) => {
     res.render("auth/login");
   });
   
-  // this is a POST to check if our user is registered
+  // this is a POST to check if our user is registered and
+  //basic security we can implement.
   router.post("/login", async (req, res, next) => {
     console.log(req.body) //check if the information is being received correctly when submitted.
 
-    try {
-        const checkedUser = await User.findOne({ email: req.body.email  })
+    try {// code below looks for a user
+        const currentUser = req.body
+        const checkedUser = await User.findOne({ email: currentUser.email.toLowerCase() })
+        if (checkedUser) {
+            //user exists. Checks if password(provided client side) and passwordHash(stored in server) match.
+            if (bcrypt.compareSync(currentUser.password,checkedUser.passwordHash)) {
+            //if correct:
+            const loggedUser = { ...checkedUser._doc } //_doc is comming from mongoose. Use it like this if you want to make a copy of something coming from mongoose.
+            delete loggedUser.passwordHash
+            console.log(loggedUser)
+            }   else {
+                // if not correct:
+                // send the error message to the login
+                console.log('wrong credentials')
+                res.render('auth/login', {errorMessage: 'Bad credentials, try again',
+            payload: { email: currentUser.email }
+            }) 
+            }
+        } else {
+            //no user exists with the provided email/credentials
+
+        }
+        
         console.log('checkedUser: ', checkedUser)
+
+
+
+
     } catch (error) {
         console.log('error in login POST', error)
     }
