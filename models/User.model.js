@@ -1,4 +1,3 @@
-// TODO: Please make sure you edit the user model to whatever makes sense in this case
 const { Schema, model } = require('mongoose')
 
 const userSchema = new Schema(
@@ -16,7 +15,7 @@ const userSchema = new Schema(
     lowercase: true,
     trim: true,
   },
-  // passwordHash 
+  // passwordHash -j
   passwordHash: {
     type: String,
     required: true,
